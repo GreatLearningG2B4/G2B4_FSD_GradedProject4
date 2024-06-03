@@ -1,5 +1,8 @@
 package com.gl.EmpManagment.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,21 @@ public class UserServiceImpl implements UserService{
 	
 		return userRepo.save(user);
 	}
+	
+    public List<User> getSortedEmployees(String order) {
+        List<User> employees = userRepo.findAll();
+        if ("asc".equalsIgnoreCase(order)) {
+            return employees.stream()
+                            .sorted((u1, u2) -> u1.getFirstName().compareToIgnoreCase(u2.getFirstName()))
+                            .collect(Collectors.toList());
+        } else if ("desc".equalsIgnoreCase(order)) {
+            return employees.stream()
+                            .sorted((u1, u2) -> u2.getFirstName().compareToIgnoreCase(u1.getFirstName()))
+                            .collect(Collectors.toList());
+        } else {
+            throw new IllegalArgumentException("Invalid sort order: " + order);
+        }
+    }
 
 	@Override
 	public Role save(Role role) {
